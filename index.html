@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz — Sociología de la Empresa y el Management</title>
+<style>
+:root {
+  --paper: #f3f4f6;
+  --card: #ffffff;
+  --ink: #1a1d29;
+  --ink-soft: #565a6b;
+  --line: #dcdee4;
+  --accent: #5457c7;
+  --accent-soft: #ececfb;
+  --good: #2e7d5b;
+  --good-soft: #e4f2ea;
+  --bad: #c2453c;
+  --bad-soft: #fbe9e7;
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(26,29,41,.04), 0 8px 24px rgba(26,29,41,.06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14151c;
+    --card: #1f212b;
+    --ink: #eceef4;
+    --ink-soft: #9aa0b0;
+    --line: #2e3140;
+    --accent: #8a8cf2;
+    --accent-soft: #262742;
+    --good: #59c795;
+    --good-soft: #16281f;
+    --bad: #e8837a;
+    --bad-soft: #2c1c1b;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="light"] {
+  --paper: #f3f4f6; --card: #ffffff; --ink: #1a1d29; --ink-soft: #565a6b;
+  --line: #dcdee4; --accent: #5457c7; --accent-soft: #ececfb;
+  --good: #2e7d5b; --good-soft: #e4f2ea; --bad: #c2453c; --bad-soft: #fbe9e7;
+  --shadow: 0 1px 2px rgba(26,29,41,.04), 0 8px 24px rgba(26,29,41,.06);
+}
+:root[data-theme="dark"] {
+  --paper: #14151c; --card: #1f212b; --ink: #eceef4; --ink-soft: #9aa0b0;
+  --line: #2e3140; --accent: #8a8cf2; --accent-soft: #262742;
+  --good: #59c795; --good-soft: #16281f; --bad: #e8837a; --bad-soft: #2c1c1b;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.4);
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 20px 80px;
+  min-height: 100vh;
+}
+
+/* ---- header ---- */
+.top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 28px;
+}
+.eyebrow {
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--accent); font-weight: 600; margin: 0 0 6px;
+}
+h1 {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 26px; line-height: 1.2; margin: 0; font-weight: 600;
+  text-wrap: balance; letter-spacing: -.01em;
+}
+.theme-btn {
+  flex-shrink: 0; background: var(--card); border: 1px solid var(--line);
+  color: var(--ink-soft); border-radius: 8px; width: 38px; height: 38px;
+  cursor: pointer; font-size: 16px; display: grid; place-items: center;
+  transition: border-color .15s, color .15s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- card ---- */
+.card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow);
+  padding: 26px;
+}
+.lead { color: var(--ink-soft); margin: 0 0 22px; font-size: 15px; }
+
+/* ---- setup screen ---- */
+.setup-label {
+  font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--ink-soft); font-weight: 600; margin: 0 0 12px;
+}
+.temas {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px;
+}
+.chip {
+  border: 1px solid var(--line); background: transparent; color: var(--ink);
+  padding: 8px 13px; border-radius: 999px; cursor: pointer; font-size: 13.5px;
+  font-family: inherit; transition: all .13s;
+}
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] {
+  background: var(--accent); border-color: var(--accent); color: #fff;
+}
+.chip .n { opacity: .6; margin-left: 5px; font-variant-numeric: tabular-nums; }
+.chip[aria-pressed="true"] .n { opacity: .8; }
+
+.opts-row { display: flex; flex-wrap: wrap; gap: 22px; margin-bottom: 26px; }
+.switch { display: flex; align-items: center; gap: 9px; cursor: pointer; font-size: 14px; user-select: none; }
+.switch input { width: 0; height: 0; opacity: 0; position: absolute; }
+.track {
+  width: 40px; height: 23px; border-radius: 999px; background: var(--line);
+  position: relative; transition: background .15s; flex-shrink: 0;
+}
+.track::after {
+  content: ""; position: absolute; top: 2px; left: 2px; width: 19px; height: 19px;
+  border-radius: 50%; background: #fff; transition: transform .16s;
+  box-shadow: 0 1px 2px rgba(0,0,0,.25);
+}
+.switch input:checked + .track { background: var(--accent); }
+.switch input:checked + .track::after { transform: translateX(17px); }
+.switch input:focus-visible + .track { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.btn {
+  font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+  border-radius: 10px; padding: 13px 22px; border: 1px solid transparent;
+  transition: filter .15s, background .15s, border-color .15s;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:hover { filter: brightness(1.07); }
+.btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+.btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+.btn:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+.btn-block { width: 100%; }
+
+/* ---- quiz screen ---- */
+.progress-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px; font-size: 13px; color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; margin-bottom: 26px; }
+.bar > i { display: block; height: 100%; background: var(--accent); border-radius: 999px; transition: width .3s ease; }
+
+.tema-tag {
+  display: inline-block; font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase;
+  font-weight: 600; color: var(--accent); background: var(--accent-soft);
+  padding: 4px 10px; border-radius: 6px; margin-bottom: 14px;
+}
+.q-text {
+  font-family: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  font-size: 19.5px; line-height: 1.4; margin: 0 0 8px; font-weight: 500;
+  text-wrap: pretty; letter-spacing: -.005em;
+}
+.multi-hint { font-size: 13px; color: var(--ink-soft); margin: 0 0 18px; font-style: italic; }
+.q-gap { margin-bottom: 20px; }
+
+.options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 22px; }
+.opt {
+  display: flex; align-items: flex-start; gap: 13px; text-align: left;
+  width: 100%; background: var(--card); border: 1.5px solid var(--line);
+  color: var(--ink); border-radius: 10px; padding: 14px 15px; cursor: pointer;
+  font-family: inherit; font-size: 15px; line-height: 1.45; transition: border-color .12s, background .12s;
+}
+.opt:hover:not(:disabled) { border-color: var(--accent); }
+.opt:disabled { cursor: default; }
+.opt .key {
+  flex-shrink: 0; width: 26px; height: 26px; border-radius: 7px;
+  border: 1.5px solid var(--line); display: grid; place-items: center;
+  font-size: 13px; font-weight: 700; text-transform: uppercase; color: var(--ink-soft);
+  transition: all .12s;
+}
+.opt:hover:not(:disabled) .key { border-color: var(--accent); color: var(--accent); }
+.opt.sel { border-color: var(--accent); background: var(--accent-soft); }
+.opt.sel .key { background: var(--accent); border-color: var(--accent); color: #fff; }
+.opt.correct { border-color: var(--good); background: var(--good-soft); }
+.opt.correct .key { background: var(--good); border-color: var(--good); color: #fff; }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .key { background: var(--bad); border-color: var(--bad); color: #fff; }
+.opt .mark { margin-left: auto; flex-shrink: 0; font-weight: 700; font-size: 15px; }
+.opt.correct .mark { color: var(--good); }
+.opt.wrong .mark { color: var(--bad); }
+
+/* ---- feedback ---- */
+.feedback { border-radius: 10px; padding: 16px 17px; margin-bottom: 22px; border: 1px solid var(--line); }
+.feedback.ok { background: var(--good-soft); border-color: color-mix(in srgb, var(--good) 35%, transparent); }
+.feedback.no { background: var(--bad-soft); border-color: color-mix(in srgb, var(--bad) 35%, transparent); }
+.feedback .verdict { font-weight: 700; font-size: 15px; margin: 0 0 8px; display: flex; align-items: center; gap: 7px; }
+.feedback.ok .verdict { color: var(--good); }
+.feedback.no .verdict { color: var(--bad); }
+.feedback .just-label {
+  font-size: 11px; letter-spacing: .09em; text-transform: uppercase; font-weight: 600;
+  color: var(--ink-soft); margin: 0 0 4px;
+}
+.feedback .just { margin: 0; font-size: 14.5px; line-height: 1.55; color: var(--ink); }
+
+.nav { display: flex; gap: 12px; }
+.nav .btn { flex: 1; }
+
+/* ---- results ---- */
+.result-score {
+  font-family: Georgia, serif; font-size: 60px; font-weight: 600; line-height: 1;
+  text-align: center; margin: 8px 0 4px; font-variant-numeric: tabular-nums;
+  letter-spacing: -.02em;
+}
+.result-pct { text-align: center; color: var(--ink-soft); margin: 0 0 26px; font-size: 15px; }
+.result-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 26px; }
+.stat { text-align: center; border: 1px solid var(--line); border-radius: 10px; padding: 15px 8px; }
+.stat b { display: block; font-size: 24px; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat.g b { color: var(--good); }
+.stat.r b { color: var(--bad); }
+.stat span { font-size: 12px; color: var(--ink-soft); letter-spacing: .03em; }
+.result-msg { text-align: center; color: var(--ink-soft); margin: 0 0 24px; font-size: 15px; }
+
+.hidden { display: none !important; }
+.foot { text-align: center; color: var(--ink-soft); font-size: 12.5px; margin-top: 26px; }
+.kbd { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11.5px; border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px; background: var(--card); }
+
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div>
+      <p class="eyebrow">Bolillero de preguntas</p>
+      <h1>Sociología de la Empresa y el Management</h1>
+    </div>
+    <button class="theme-btn" id="themeBtn" title="Cambiar tema" aria-label="Cambiar tema">◐</button>
+  </div>
+
+  <!-- SETUP -->
+  <section class="card" id="setup">
+    <p class="lead">Practicá con <b id="totalCount">91</b> preguntas de la cátedra. Elegí un tema o repasá todo el programa.</p>
+
+    <p class="setup-label">Temas</p>
+    <div class="temas" id="temas"></div>
+
+    <div class="opts-row">
+      <label class="switch">
+        <input type="checkbox" id="shuffle" checked>
+        <span class="track"></span>
+        <span>Orden aleatorio</span>
+      </label>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="startBtn">Empezar quiz</button>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="card hidden" id="quiz">
+    <div class="progress-head">
+      <span id="counter">Pregunta 1 / 10</span>
+      <span id="scoreLive">0 correctas</span>
+    </div>
+    <div class="bar"><i id="barFill" style="width:0%"></i></div>
+
+    <span class="tema-tag" id="qTema">Tema</span>
+    <p class="q-text" id="qText">…</p>
+    <p class="multi-hint hidden" id="multiHint">Puede tener más de una respuesta correcta — seleccioná todas y confirmá.</p>
+    <div class="q-gap"></div>
+
+    <div class="options" id="options"></div>
+
+    <div class="feedback hidden" id="feedback">
+      <p class="verdict" id="verdict"></p>
+      <p class="just-label">Justificación</p>
+      <p class="just" id="just"></p>
+    </div>
+
+    <div class="nav">
+      <button class="btn btn-ghost" id="confirmBtn">Confirmar</button>
+      <button class="btn btn-primary hidden" id="nextBtn">Siguiente</button>
+    </div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="card hidden" id="results">
+    <p class="setup-label" style="text-align:center">Resultado</p>
+    <div class="result-score" id="rScore">0/0</div>
+    <p class="result-pct" id="rPct">0% de aciertos</p>
+    <div class="result-grid">
+      <div class="stat"><b id="rTotal">0</b><span>Respondidas</span></div>
+      <div class="stat g"><b id="rOk">0</b><span>Correctas</span></div>
+      <div class="stat r"><b id="rBad">0</b><span>Erradas</span></div>
+    </div>
+    <p class="result-msg" id="rMsg"></p>
+    <div class="nav">
+      <button class="btn btn-ghost" id="againBtn">Mismo tema otra vez</button>
+      <button class="btn btn-primary" id="homeBtn">Elegir otro tema</button>
+    </div>
+  </section>
+
+  <p class="foot">Teclas: <span class="kbd">A</span>–<span class="kbd">E</span> responder · <span class="kbd">Enter</span> confirmar / siguiente</p>
+</div>
+
+<script src="preguntas.js"></script>
+<script>
+(function () {
+  "use strict";
+  var ALL = window.PREGUNTAS || [];
+
+  // ---- theme ----
+  var themeBtn = document.getElementById("themeBtn");
+  themeBtn.addEventListener("click", function () {
+    var cur = document.documentElement.getAttribute("data-theme");
+    if (!cur) {
+      cur = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    document.documentElement.setAttribute("data-theme", cur === "dark" ? "light" : "dark");
+  });
+
+  // ---- elements ----
+  var el = function (id) { return document.getElementById(id); };
+  var setup = el("setup"), quiz = el("quiz"), results = el("results");
+
+  document.getElementById("totalCount").textContent = ALL.length;
+
+  // ---- tema selection ----
+  var temas = [];
+  ALL.forEach(function (p) { if (temas.indexOf(p.tema) === -1) temas.push(p.tema); });
+  temas.sort(function (a, b) { return a.localeCompare(b, "es"); });
+
+  var selectedTema = null; // null = todos
+  var temasBox = el("temas");
+
+  function chip(label, value, count) {
+    var b = document.createElement("button");
+    b.className = "chip";
+    b.setAttribute("aria-pressed", value === selectedTema ? "true" : "false");
+    b.innerHTML = label + '<span class="n">' + count + "</span>";
+    b.addEventListener("click", function () {
+      selectedTema = value;
+      Array.prototype.forEach.call(temasBox.children, function (c) { c.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+    });
+    return b;
+  }
+  temasBox.appendChild(chip("Todos", null, ALL.length));
+  temas.forEach(function (t) {
+    var n = ALL.filter(function (p) { return p.tema === t; }).length;
+    temasBox.appendChild(chip(t, t, n));
+  });
+
+  // ---- quiz state ----
+  var lista = [], idx = 0, correctas = 0, respondidas = 0, locked = false, picks = [];
+
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function show(section) {
+    setup.classList.add("hidden"); quiz.classList.add("hidden"); results.classList.add("hidden");
+    section.classList.remove("hidden");
+  }
+
+  el("startBtn").addEventListener("click", startQuiz);
+  function startQuiz() {
+    var pool = selectedTema ? ALL.filter(function (p) { return p.tema === selectedTema; }) : ALL.slice();
+    lista = el("shuffle").checked ? shuffle(pool) : pool.slice();
+    idx = 0; correctas = 0; respondidas = 0;
+    show(quiz);
+    renderQuestion();
+  }
+
+  function correctSet(p) {
+    return Array.isArray(p.correcta) ? p.correcta.slice() : [p.correcta];
+  }
+
+  function renderQuestion() {
+    locked = false; picks = [];
+    var p = lista[idx];
+    var multi = Array.isArray(p.correcta);
+
+    el("counter").textContent = "Pregunta " + (idx + 1) + " / " + lista.length;
+    el("scoreLive").textContent = correctas + " correcta" + (correctas === 1 ? "" : "s");
+    el("barFill").style.width = ((idx) / lista.length * 100) + "%";
+    el("qTema").textContent = p.tema;
+    el("qText").textContent = p.pregunta;
+    el("multiHint").classList.toggle("hidden", !multi);
+
+    var box = el("options");
+    box.innerHTML = "";
+    Object.keys(p.opciones).sort().forEach(function (letra) {
+      var btn = document.createElement("button");
+      btn.className = "opt";
+      btn.dataset.letra = letra;
+      btn.innerHTML = '<span class="key">' + letra + '</span><span class="txt">' + escapeHtml(p.opciones[letra]) + '</span><span class="mark"></span>';
+      btn.addEventListener("click", function () { pick(letra, multi); });
+      box.appendChild(btn);
+    });
+
+    // feedback + nav reset
+    el("feedback").classList.add("hidden");
+    var confirm = el("confirmBtn"), next = el("nextBtn");
+    confirm.classList.remove("hidden");
+    confirm.disabled = true;
+    confirm.textContent = "Confirmar";
+    next.classList.add("hidden");
+  }
+
+  function pick(letra, multi) {
+    if (locked) return;
+    if (multi) {
+      var i = picks.indexOf(letra);
+      if (i === -1) picks.push(letra); else picks.splice(i, 1);
+    } else {
+      picks = [letra];
+    }
+    // repaint selection
+    Array.prototype.forEach.call(el("options").children, function (btn) {
+      btn.classList.toggle("sel", picks.indexOf(btn.dataset.letra) !== -1);
+    });
+    el("confirmBtn").disabled = picks.length === 0;
+    // single-answer: auto-confirm feel — still require confirm for consistency
+  }
+
+  el("confirmBtn").addEventListener("click", confirmAnswer);
+  function confirmAnswer() {
+    if (locked || picks.length === 0) return;
+    locked = true;
+    var p = lista[idx];
+    var correct = correctSet(p);
+    var right = picks.length === correct.length && picks.every(function (l) { return correct.indexOf(l) !== -1; });
+
+    respondidas++;
+    if (right) correctas++;
+
+    Array.prototype.forEach.call(el("options").children, function (btn) {
+      var letra = btn.dataset.letra;
+      btn.disabled = true;
+      btn.classList.remove("sel");
+      var isCorrect = correct.indexOf(letra) !== -1;
+      var chosen = picks.indexOf(letra) !== -1;
+      var mark = btn.querySelector(".mark");
+      if (isCorrect) { btn.classList.add("correct"); mark.textContent = "✓"; }
+      else if (chosen) { btn.classList.add("wrong"); mark.textContent = "✗"; }
+    });
+
+    var fb = el("feedback");
+    fb.classList.remove("hidden", "ok", "no");
+    fb.classList.add(right ? "ok" : "no");
+    el("verdict").textContent = right ? "✅ ¡Correcto!" : "❌ Incorrecto";
+    el("just").textContent = p.justificacion;
+    el("barFill").style.width = ((idx + 1) / lista.length * 100) + "%";
+    el("scoreLive").textContent = correctas + " correcta" + (correctas === 1 ? "" : "s");
+
+    el("confirmBtn").classList.add("hidden");
+    var next = el("nextBtn");
+    next.classList.remove("hidden");
+    next.textContent = idx + 1 >= lista.length ? "Ver resultado" : "Siguiente";
+    next.focus();
+  }
+
+  el("nextBtn").addEventListener("click", nextQuestion);
+  function nextQuestion() {
+    idx++;
+    if (idx >= lista.length) { renderResults(); return; }
+    renderQuestion();
+  }
+
+  function renderResults() {
+    show(results);
+    var pct = respondidas ? Math.round(correctas / respondidas * 100) : 0;
+    el("rScore").textContent = correctas + "/" + respondidas;
+    el("rPct").textContent = pct + "% de aciertos";
+    el("rTotal").textContent = respondidas;
+    el("rOk").textContent = correctas;
+    el("rBad").textContent = respondidas - correctas;
+    var msg;
+    if (pct >= 85) msg = "Dominás el tema. Listo para el final.";
+    else if (pct >= 65) msg = "Buena base — repasá las que fallaste.";
+    else if (pct >= 40) msg = "Vas encaminado, seguí practicando.";
+    else msg = "Hora de volver a los textos de la cátedra.";
+    el("rMsg").textContent = msg;
+  }
+
+  el("againBtn").addEventListener("click", startQuiz);
+  el("homeBtn").addEventListener("click", function () { show(setup); });
+
+  // ---- keyboard ----
+  document.addEventListener("keydown", function (e) {
+    if (quiz.classList.contains("hidden")) return;
+    var k = e.key.toLowerCase();
+    if (!locked && "abcde".indexOf(k) !== -1) {
+      var p = lista[idx];
+      if (p.opciones[k]) { pick(k, Array.isArray(p.correcta)); e.preventDefault(); }
+    } else if (e.key === "Enter") {
+      if (!locked && !el("confirmBtn").disabled) { confirmAnswer(); e.preventDefault(); }
+      else if (locked) { nextQuestion(); e.preventDefault(); }
+    }
+  });
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+})();
+</script>
+</body>
+</html>

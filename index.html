@@ -142,6 +142,12 @@ h1 {
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn:disabled { opacity: .45; cursor: not-allowed; filter: none; }
 .btn-block { width: 100%; }
+.btn-link {
+  background: none; border: none; padding: 0; margin: 0 0 18px; cursor: pointer;
+  font-family: inherit; font-size: 13.5px; color: var(--ink-soft); font-weight: 500;
+  transition: color .13s;
+}
+.btn-link:hover { color: var(--accent); }
 
 /* ---- quiz screen ---- */
 .progress-head {
@@ -246,6 +252,9 @@ h1 {
     <p class="setup-label">Temas</p>
     <div class="temas" id="temas"></div>
 
+    <p class="setup-label">Cantidad de preguntas</p>
+    <div class="temas" id="cantidad"></div>
+
     <div class="opts-row">
       <label class="switch">
         <input type="checkbox" id="shuffle" checked>
@@ -259,6 +268,7 @@ h1 {
 
   <!-- QUIZ -->
   <section class="card hidden" id="quiz">
+    <button class="btn-link" id="backBtn">← Volver al inicio</button>
     <div class="progress-head">
       <span id="counter">Pregunta 1 / 10</span>
       <span id="scoreLive">0 correctas</span>
@@ -343,6 +353,7 @@ h1 {
       selectedTema = value;
       Array.prototype.forEach.call(temasBox.children, function (c) { c.setAttribute("aria-pressed", "false"); });
       b.setAttribute("aria-pressed", "true");
+      refreshCantidad();
     });
     return b;
   }
@@ -351,6 +362,41 @@ h1 {
     var n = ALL.filter(function (p) { return p.tema === t; }).length;
     temasBox.appendChild(chip(t, t, n));
   });
+
+  // ---- cantidad de preguntas ----
+  var CANT_OPTS = [5, 10, 20, null]; // null = todas
+  var selectedCantidad = 10;
+  var cantBox = el("cantidad");
+
+  function availableCount() {
+    return selectedTema ? ALL.filter(function (p) { return p.tema === selectedTema; }).length : ALL.length;
+  }
+  function effectiveCantidad(avail) {
+    if (selectedCantidad === null || selectedCantidad > avail) return null;
+    return selectedCantidad;
+  }
+  function refreshCantidad() {
+    var avail = availableCount();
+    var eff = effectiveCantidad(avail);
+    cantBox.innerHTML = "";
+    CANT_OPTS.forEach(function (v) {
+      var disabled = v !== null && v > avail;
+      var b = document.createElement("button");
+      b.className = "chip";
+      b.type = "button";
+      b.disabled = disabled;
+      b.innerHTML = v === null ? ('Todas<span class="n">' + avail + '</span>') : String(v);
+      b.setAttribute("aria-pressed", v === eff ? "true" : "false");
+      b.addEventListener("click", function () {
+        if (disabled) return;
+        selectedCantidad = v;
+        Array.prototype.forEach.call(cantBox.children, function (c) { c.setAttribute("aria-pressed", "false"); });
+        b.setAttribute("aria-pressed", "true");
+      });
+      cantBox.appendChild(b);
+    });
+  }
+  refreshCantidad();
 
   // ---- quiz state ----
   var lista = [], idx = 0, correctas = 0, respondidas = 0, locked = false, picks = [];
@@ -370,9 +416,12 @@ h1 {
   }
 
   el("startBtn").addEventListener("click", startQuiz);
+  el("backBtn").addEventListener("click", function () { show(setup); });
   function startQuiz() {
     var pool = selectedTema ? ALL.filter(function (p) { return p.tema === selectedTema; }) : ALL.slice();
-    lista = el("shuffle").checked ? shuffle(pool) : pool.slice();
+    var ordered = el("shuffle").checked ? shuffle(pool) : pool.slice();
+    var n = selectedCantidad === null ? ordered.length : Math.min(selectedCantidad, ordered.length);
+    lista = ordered.slice(0, n);
     idx = 0; correctas = 0; respondidas = 0;
     show(quiz);
     renderQuestion();
